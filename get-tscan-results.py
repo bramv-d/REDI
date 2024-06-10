@@ -6,6 +6,8 @@ from codecs import encode
 from datetime import datetime
 import time
 import xml.etree.ElementTree as ET
+# You should create your own config.py file with the KEY variable
+# The key variable is a hash of the username and password
 from config import KEY
 
 
