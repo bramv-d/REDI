@@ -263,6 +263,8 @@ def poll_for_results(project_name):
         time.sleep(10)
 
 
+
+
 def main():
     project_name = "thursday"
     # create_project(project_name)
@@ -270,5 +272,7 @@ def main():
     # start_project(project_name)
     poll_for_results(project_name)
     # save_results_to_file("results.csv", project_name)
+
+
 
 main()
