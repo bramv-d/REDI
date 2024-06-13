@@ -205,13 +205,7 @@ def start_project(project_name):
     conn.request("POST", "/tscan/" + project_name + "/", payload, headers)
 
     res = conn.getresponse()
-    data = res.read()
-    if res.status == 200:
-        return True
-    else:
-        print("Error starting project:", project_name)
-        print(data.decode("utf-8"))
-        return False
+
 
 
 def poll_project(project_name):
@@ -270,15 +264,11 @@ def poll_for_results(project_name):
 
 
 def main():
-    project_name = "wednesday1"
-    create_project(project_name)
-    if loop_through_files(project_name):
-        if start_project(project_name):
-            if poll_for_results(project_name):
-                if save_results_to_file("results.csv", project_name):
-                    print("Results saved to results.csv")
-                    return
-    print("Something went wrong")
+    project_name = "thursday"
+    # create_project(project_name)
+    # loop_through_files(project_name)
+    # start_project(project_name)
+    poll_for_results(project_name)
+    # save_results_to_file("results.csv", project_name)
 
-
-poll_for_results("wednesday1")
+main()
