@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3ea2bde7-e6fb-4d2e-a87f-11937f50c14f" name="Changes" comment="Added everything">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analyze-text-features.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analyze-text-features.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/get-tscan-results.py" beforeDir="false" afterPath="$PROJECT_DIR$/get-tscan-results.py" afterDir="false" />
-    </list>
+    <list default="true" id="3ea2bde7-e6fb-4d2e-a87f-11937f50c14f" name="Changes" comment="Added everything" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -112,6 +108,7 @@
       <workItem from="1718024671919" duration="584000" />
       <workItem from="1718026293063" duration="1355000" />
       <workItem from="1718280882887" duration="973000" />
+      <workItem from="1718347971300" duration="2000" />
     </task>
     <task id="LOCAL-00001" summary="Init commit">
       <option name="closed" value="true" />

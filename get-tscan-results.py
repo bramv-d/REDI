@@ -270,8 +270,8 @@ def main():
     # create_project(project_name)
     # loop_through_files(project_name)
     # start_project(project_name)
-    poll_for_results(project_name)
-    # save_results_to_file("results.csv", project_name)
+    # poll_for_results(project_name)
+    save_results_to_file("14-06-2024.csv", project_name)
 
 
 
