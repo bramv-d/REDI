@@ -6,37 +6,15 @@ from codecs import encode
 from datetime import datetime
 import time
 import xml.etree.ElementTree as ET
+
 # You should create your own config.py file with the KEY variable
-# The key variable is a hash of the username and password
+# The key variable is a hash of the username and password for the Tscan.
 from config import KEY
 
-
-def convert_to_directory():
-    # Define the source and destination directories
-    source_directory = 'Files'
-    destination_directory = 'files-with-avi'
-
-    # Create the destination directory if it does not exist
-    if not os.path.exists(destination_directory):
-        os.makedirs(destination_directory)
-
-    # Walk through the source directory and copy each file to the destination directory with the modified names
-    for root, dirs, files in os.walk(source_directory):
-        for file in files:
-            # Get the full path of the file
-            file_path = os.path.join(root, file)
-            # Get the relative path of the file
-            relative_path = os.path.relpath(file_path, source_directory)
-            # Modify the filename to include the directory it is placed in
-            dir_name = os.path.basename(root)
-            new_filename = f"{dir_name}_{file}"
-
+source_directory = 'Books'
 
 def loop_through_files(project_name):
-    # Define the source directory
-    source_directory = 'Files'
-
-    # Walk through the source directory and print the names of the files
+    # Walk through the source directory and add the files to the scan
     for root, dirs, files in os.walk(source_directory):
         # Walk through the directories
         for directory in dirs:
@@ -54,8 +32,6 @@ def loop_through_files(project_name):
 def create_project(project_name):
     conn = http.client.HTTPSConnection("tscan.hum.uu.nl")
     payload = ''
-    # Get the key from the AUTHENTICATION.md file
-
     headers = {
         'Authorization': 'Basic ' + KEY
     }
@@ -264,15 +240,13 @@ def poll_for_results(project_name):
 
 
 
-
+# This methods defines all the seperate stages of getting the t-scan results
 def main():
-    project_name = "thursday"
+    project_name = "project_name"
     # create_project(project_name)
     # loop_through_files(project_name)
     # start_project(project_name)
     # poll_for_results(project_name)
-    save_results_to_file("14-06-2024.csv", project_name)
-
-
+    save_results_to_file("file_name.csv", project_name)
 
 main()
