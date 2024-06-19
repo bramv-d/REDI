@@ -72,9 +72,10 @@ def train_and_evaluate_model(data, target_column, columns_to_keep):
     y_pred = best_model.predict(X_test)
     
     # Evaluate with tolerance
-    score = score_with_tolerance(y_test, y_pred)
+    tolerance = 1
+    score = score_with_tolerance(y_test, y_pred, tolerance)
     
-    print(f"Score with tolerance of ±1: {score * 100:.2f}%")
+    print(f"Score with tolerance of {tolerance}: {score * 100:.2f}%")
     
     # Train the model on the entire dataset to get feature importances
     best_model.fit(X_scaled, y)
