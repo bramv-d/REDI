@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
@@ -19,6 +20,8 @@ def train_and_evaluate_model(data, target_column, columns_to_keep):
     # Separate features and target variable
     X = filtered_data.drop(columns=[target_column])
     X.dropna(axis=1, inplace=True)  # Drop columns with missing values
+    X = X.select_dtypes(include=[np.number])
+
     y = filtered_data[target_column]
     
     # Standardize the features
@@ -39,6 +42,8 @@ def train_and_evaluate_model(data, target_column, columns_to_keep):
     # Initialize the model
     model = RandomForestRegressor(random_state=42)
     # model = DecisionTreeRegressor(random_state=42)
+    
+    # perform a systematic search over a grid of hyperparameters
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5, scoring='neg_mean_squared_error')
     grid_search.fit(X_train, y_train)
     best_model = grid_search.best_estimator_
@@ -86,6 +91,7 @@ def train_and_evaluate_model(data, target_column, columns_to_keep):
     importance_df = importance_df.sort_values(by='Importance', ascending=False)
     
     print(importance_df)
+    importance_df.to_csv('Model Train/feature_importances.txt', sep='\t', index=False)
 
     
     
@@ -94,14 +100,20 @@ def train_and_evaluate_model(data, target_column, columns_to_keep):
 
 # Load the data
 data = pd.read_csv('./results_with_avi.csv')
+dropdata = data.dropna(axis=1)
+columnames = dropdata.columns.to_list()
+print(columnames)
 target_column = 'AVI'
 
-# Keep these columns and drop the rest
-columns_to_keep = ['Wrd_per_zin','Pers_vnw_d', "AL_max", "Let_per_wrd_corr", 'Props_dz_tot', 'AL_gem', 'AVI']  # Include the target column in the list
-
-# Train and evaluate the model with the specified columns
+# Keep these columns based on related work
+columns_to_keep = columnames  # Include the target column in the list
 model, avg_mse = train_and_evaluate_model(data, target_column, columns_to_keep)
 
-# You can now try different combinations of columns
-columns_to_keep_2 = ['Let_per_wrd_corr', 'Props_dz_tot', 'AL_gem', 'AVI']  # Another variation
-model_2, avg_mse_2 = train_and_evaluate_model(data, target_column, columns_to_keep_2)
+
+# # Keep these columns based on related work
+# columns_to_keep_2 = ['Wrd_per_zin','Pers_vnw_d', "AL_max", "Let_per_wrd_corr", 'Props_dz_tot', 'AL_gem', 'AVI']  # Include the target column in the list
+# model_2, avg_mse_2 = train_and_evaluate_model(data, target_column, columns_to_keep_2)
+
+# # Keep these columns based on ML Feature findings
+# columns_to_keep_3 = ['Let_per_wrd_corr', 'Props_dz_tot', 'AL_gem', 'AVI']  # Another variation
+# model_3, avg_mse_3 = train_and_evaluate_model(data, target_column, columns_to_keep_3)
