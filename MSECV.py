@@ -21,17 +21,21 @@ def prepare_data(file_path, columns_to_keep=None):
     avi_scores = [s.split('_')[1] for s in first_column]
     # Add the AVI scores to the dataframe
     data.insert(1, 'AVI', avi_scores)
+    data = data.dropna(axis=1)
     data = data.drop(columns=['Inputfile'])
-    if columns_to_keep:
+    # Optionally select columns to keep, including 'AVI'
+    if columns_to_keep is not None:
+        columns_to_keep.append('AVI')  # Ensure 'AVI' is included
         return data[columns_to_keep]
-    else: 
+    else:
         return data
+
 
 # Define a function to standardize features, train the model, and evaluate it
 def train_and_evaluate_model(data, target_column, run_name, model_name):    
     # Separate features and target variable
     X = data.drop(columns=[target_column])
-    X.dropna(axis=1, inplace=True)  # Drop columns with missing values
+    # X.dropna(axis=1, inplace=True)  # Drop columns with missing values
     X = X.select_dtypes(include=[np.number])
 
     y = data[target_column]
@@ -59,25 +63,11 @@ def train_and_evaluate_model(data, target_column, run_name, model_name):
     grid_search.fit(X_train, y_train)
     best_model = grid_search.best_estimator_
 
-    if best_model.feature_importances_:
-    # Feature selection using RFECV
-        rfecv = RFECV(estimator=best_model, 
-                    step=1, 
-                    cv=5, scoring='neg_mean_squared_error')
-        rfecv.fit(X_train, y_train)
-
-        # Get the selected features
-        selected_features = X.columns[rfecv.support_]
-        # Train the model with the selected features
-        X_train_selected = rfecv.transform(X_train)
-        X_test_selected = rfecv.transform(X_test)
-        best_model.fit(X_train_selected, y_train)
-    else:
-        best_model.fit(X_train, y_train)
+    best_model.fit(X_train, y_train)
     
 
     # Define the directory path
-    directory_path = model_name + '/' + run_name
+    directory_path = 'RegressionModels/' + model_name + '/' + run_name
 
     # Create the directory if it does not exist
     os.makedirs(directory_path, exist_ok=True)
@@ -90,56 +80,35 @@ def train_and_evaluate_model(data, target_column, run_name, model_name):
     
     # Implement k-fold cross-validation
     kf = KFold(n_splits=5, shuffle=True, random_state=42)
-    if rfecv:
-        cv_scores = cross_val_score(best_model, X_scaled[:, rfecv.support_], y, cv=kf, scoring='neg_mean_squared_error')
-    else:
-        cv_scores = cross_val_score(best_model, X_scaled, y, cv=kf, scoring='neg_mean_squared_error')
+
+    cv_scores = cross_val_score(best_model, X_scaled, y, cv=kf, scoring='neg_mean_squared_error')
 
     MSE_scores = -cv_scores
     avarage_MSE = -cv_scores.mean()
     
-    # Custom scoring function to evaluate with tolerance
-    def score_with_tolerance(y_true, y_pred, tolerance=1):
-        within_tolerance = (abs(y_true - y_pred) <= tolerance).sum()
-        return within_tolerance / len(y_true)
-    
     # Save the model and scaler
-    joblib.dump(best_model, model_name + '/' + run_name + '/difficulty_model.pkl')
-    joblib.dump(scaler, model_name+ '/' + run_name + '/scaler.pkl')
-    if rfecv:
-        joblib.dump(rfecv, model_name+ '/' + run_name + '/rfecv.pkl')
+    joblib.dump(best_model, directory_path + '/difficulty_model.pkl')
+    joblib.dump(scaler, directory_path + '/scaler.pkl')
 
-    print("Model, scaler, and RFECV saved successfully.")
-
-    # Make predictions
-    y_pred = best_model.predict(X_test_selected)
-    
-    # Evaluate with tolerance
-    tolerance = 1
-    score = score_with_tolerance(y_test, y_pred, tolerance)
     # Write the score and average MSE to the CSV file
-    file_name = 'scores.csv'
-    file_path = os.path.join(directory_path, file_name)
+    file_path = os.path.join(directory_path, 'scores.csv')
 
     with open(file_path, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["Score","MSE scores", "Average MSE"])
-        writer.writerow([score,MSE_scores,avarage_MSE ])
+        writer.writerow(["MSE scores", "Average MSE"])
+        writer.writerow([MSE_scores,avarage_MSE ])
 
-    # Train the model on the entire dataset to get feature importances
-    best_model.fit(X_scaled[:, rfecv.support_], y)
-    
+    best_model.fit(X_scaled, y)
     # Display feature importances
     feature_importances = best_model.feature_importances_
-    feature_names = selected_features
+    feature_names = X.columns
     importance_df = pd.DataFrame({'Feature': feature_names, 'Importance': feature_importances})
     importance_df = importance_df.sort_values(by='Importance', ascending=False)
     
     print(importance_df)
-    importance_df.to_csv(model_name+ '/' + run_name +  '/feature_importances.csv', sep='\t', index=False)
-    
+    importance_df.to_csv(directory_path +  '/feature_importances.csv', sep='\t', index=False)
     return best_model, avarage_MSE
 
-data = prepare_data("T-scan results/14-06-2024.csv")
+data = prepare_data("T-scan results/14-06-2024.csv", ['Props_dz_tot'] )
 target_column = 'AVI'
-model, avg_mse = train_and_evaluate_model(data, target_column, 'run1', 'RandomForestRegressor')
+model, avg_mse = train_and_evaluate_model(data, target_column, 'run2', 'RandomForestRegressor')
