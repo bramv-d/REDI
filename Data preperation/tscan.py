@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 # The key variable is a hash of the username and password for the Tscan.
 from config import KEY
 
-source_directory = 'Books'
+source_directory = 'Holdout sample'
 
 def loop_through_files(project_name):
     # Walk through the source directory and add the files to the scan
@@ -242,11 +242,11 @@ def poll_for_results(project_name):
 
 # This methods defines all the seperate stages of getting the t-scan results
 def main():
-    project_name = "project_name"
+    project_name = "prediction"
     # create_project(project_name)
     # loop_through_files(project_name)
     # start_project(project_name)
     # poll_for_results(project_name)
-    save_results_to_file("file_name.csv", project_name)
+    save_results_to_file("predict.csv", project_name)
 
 main()
