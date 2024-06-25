@@ -242,7 +242,7 @@ def poll_for_results(project_name):
 
 # This methods defines all the seperate stages of getting the t-scan results
 def main():
-    project_name = "prediction"
+    project_name = "holdout_sample"
     # create_project(project_name)
     # loop_through_files(project_name)
     # start_project(project_name)

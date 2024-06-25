@@ -72,5 +72,5 @@ def process_files(root_dir):
                         file.write(cleaned_text)
 
 if __name__ == "__main__":
-    root_directory = './Files'
+    root_directory = './Holdout sample'
     process_files(root_directory)
